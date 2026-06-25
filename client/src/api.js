@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create standard axios instance config
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
 });
 
 // Interceptor to inject stored JWT token to outgoing headers
