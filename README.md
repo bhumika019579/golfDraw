@@ -8,8 +8,7 @@ Built as a selection assignment for Digital Heroes — demonstrating full-stack 
 
 ## Live Demo
 
-- **Frontend**: _[Vercel URL here]_
-- **Backend API**: _[Render URL here]_
+Live Link : https://golf-draw-xi.vercel.app/
 
 ### Test Credentials
 
