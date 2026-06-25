@@ -1,0 +1,69 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  name               String
+  email              String    @unique
+  password           String
+  role               String    @default("subscriber") // "subscriber" | "admin"
+  isSubscribed       Boolean   @default(false)
+  subscriptionPlan   String?   // "monthly" | "yearly"
+  subscriptionDate   DateTime?
+  charityId          String?
+  charityPercent     Float     @default(10)
+  scores             Score[]
+  winners            Winner[]
+  charity            Charity?  @relation(fields: [charityId], references: [id])
+  createdAt          DateTime  @default(now())
+}
+
+model Score {
+  id        String   @id @default(cuid())
+  userId    String
+  value     Int      // 1–45
+  date      DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  @@unique([userId, date])
+}
+
+model Charity {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  imageUrl    String?
+  users       User[]
+}
+
+model Draw {
+  id           String   @id @default(cuid())
+  month        String   // "2026-06"
+  drawnNumbers Int[]    // 5 numbers picked
+  totalPool    Float
+  jackpotPool  Float    // 40%
+  matchFour    Float    // 35%
+  matchThree   Float    // 25%
+  jackpotRolled Boolean @default(false)
+  published    Boolean  @default(false)
+  winners      Winner[]
+  createdAt    DateTime @default(now())
+}
+
+model Winner {
+  id           String   @id @default(cuid())
+  userId       String
+  drawId       String
+  matchCount   Int      // 3, 4, or 5
+  prizeAmount  Float
+  proofUrl     String?
+  status       String   @default("pending") // "pending" | "approved" | "paid"
+  user         User     @relation(fields: [userId], references: [id])
+  draw         Draw     @relation(fields: [drawId], references: [id])
+}
